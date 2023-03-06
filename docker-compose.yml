@@ -1,0 +1,29 @@
+# docker-compose.yml
+
+# Usage: docker-compose up -d
+
+services:
+  web:
+    depends_on:
+      - db
+    restart: on-failure:4  
+    build:
+        dockerfile: Dockerfile
+        tags:
+          - pymasoud/flask_todo_compose:latest
+          - pymasoud/flask_todo_compose:v4          
+    image: pymasoud/flask_todo_compose       
+    ports:
+      - 5000:80
+    environment:
+      Flask_DEBUG: true
+      
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+    volumes:
+      - "./.database:/var/lib/mysql"   # lokala mappen : mappen i containern
