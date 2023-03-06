@@ -29,3 +29,24 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/actionsdemo:latest
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # checkout the repo
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@master
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Deploy to Azure'
+        uses: Azure/aci-deploy@v1
+        with:
+          resource-group: flask_todo_docker
+          dns-name-label: flaskactiondemo
+          image: docker.io/pymasoud/flask_todo:v3
+          name: flask-actionsdemo
+          location: 'north europe'
